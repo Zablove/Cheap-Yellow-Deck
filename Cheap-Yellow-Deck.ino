@@ -71,13 +71,13 @@ void touchscreen_read(lv_indev_t * indev, lv_indev_data_t * data) {
     data->point.y = y;
 
     // Print Touchscreen info about X, Y and Pressure (Z) on the Serial Monitor
-    Serial.print("X = ");
-    Serial.print(x);
-    Serial.print(" | Y = ");
-    Serial.print(y);
-    Serial.print(" | Pressure = ");
-    Serial.print(z);
-    Serial.println();
+    // Serial.print("X = ");
+    // Serial.print(x);
+    // Serial.print(" | Y = ");
+    // Serial.print(y);
+    // Serial.print(" | Pressure = ");
+    // Serial.print(z);
+    // Serial.println();
   }
   else {
     data->state = LV_INDEV_STATE_RELEASED;
@@ -85,6 +85,10 @@ void touchscreen_read(lv_indev_t * indev, lv_indev_data_t * data) {
 }
 
 // Callback that is triggered when btn1 is clicked
+// Button to switch to program 3, search for string 1streamdeck, copy password, 
+// ALT+TAB back to original window, paste password
+// switch back to program 3, copy otp with CTRL+T, switch back
+// to original screen, paste, press ENTER, wait, type aj and press ENTER
 static void event_handler_btn1(lv_event_t * e) {
   lv_event_code_t code = lv_event_get_code(e);
   if(code == LV_EVENT_CLICKED) {
@@ -147,11 +151,12 @@ static void event_handler_btn1(lv_event_t * e) {
     bleKeyboard.press(KEY_RETURN);
     delay(100);
     bleKeyboard.releaseAll();
-    
   }
 }
 
 // Callback that is triggered when btn2 is clicked
+// Switch to program 3, search for string 1streamdeck, copy, switch 
+// back to original program and past password + ENTER
 static void event_handler_btn2(lv_event_t * e) {
   lv_event_code_t code = lv_event_get_code(e);
   lv_obj_t * obj = (lv_obj_t*) lv_event_get_target(e);
@@ -190,6 +195,9 @@ static void event_handler_btn2(lv_event_t * e) {
   }
 }
 
+// Callback that is triggered when btn2 is clicked
+// Switch to program 3, search for string 1streamdeck, copy, switch 
+// back to original program and past password + ENTER
 static void event_handler_btn3(lv_event_t * e) {
   lv_event_code_t code = lv_event_get_code(e);
   if(code == LV_EVENT_CLICKED) {
@@ -227,11 +235,42 @@ static void event_handler_btn3(lv_event_t * e) {
   }
 }
 
+// Callback that is triggered when btn2 is clicked
+// Switch to program 3, search for string 1streamdeck, copy, switch 
+// back to original program and past password + ENTER
 static void event_handler_btn4(lv_event_t * e) {
   lv_event_code_t code = lv_event_get_code(e);
   if(code == LV_EVENT_CLICKED) {
-    bleKeyboard.print("Knop4");
+    bleKeyboard.press(KEY_LEFT_GUI);
+    delay(100);
+    bleKeyboard.press(51); //Win+3 = Keepass
+    delay(100);
+    bleKeyboard.releaseAll();
+    delay(100);
+    bleKeyboard.press(KEY_LEFT_CTRL);
+    delay(100);
+    bleKeyboard.press(102); //Ctrl+F to search in Keepass
+    delay(100);
+    bleKeyboard.releaseAll();
+    bleKeyboard.print("3streamdeck"); //Search 1streamdeck password
+    delay(100);
+    bleKeyboard.press(KEY_LEFT_CTRL);
+    delay(100);
+    bleKeyboard.press(99); //Ctrl+C for copy password
+    delay(100);
+    bleKeyboard.releaseAll();
+    bleKeyboard.press(KEY_LEFT_ALT);
+    delay(100);
+    bleKeyboard.press(KEY_TAB); //Alt+TAB to switch back to application
+    delay(100);
+    bleKeyboard.releaseAll();
+    bleKeyboard.press(KEY_LEFT_CTRL);
+    delay(100);
+    bleKeyboard.press(118); //Ctrl+v to paste password
+    delay(100);
+    bleKeyboard.releaseAll();
     bleKeyboard.press(KEY_RETURN);
+    delay(100);
     bleKeyboard.releaseAll();
   }
 }
@@ -341,6 +380,7 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn1);
   lv_label_set_text(btn_label, "AKS");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn1, lv_color_make(72, 71, 72), 0);
   lv_obj_set_size(btn1, 100, 50);
 
   // Create a Toggle button (btn2)
@@ -351,6 +391,7 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn2);
   lv_label_set_text(btn_label, "OCC Pwd");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn2, lv_color_make(72, 71, 72), 0);
   lv_obj_set_size(btn2, 100, 50);
   
   // Create a Button (btn3)
@@ -361,6 +402,7 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn3);
   lv_label_set_text(btn_label, "CE Pwd");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn3, lv_color_make(72, 71, 72), 0);
   lv_obj_set_size(btn3, 100, 50);
 
   // Create a Button (btn4)
@@ -369,8 +411,9 @@ void lv_create_main_gui(void) {
   lv_obj_align(btn4, LV_ALIGN_CENTER, -110, 90);
   lv_obj_remove_flag(btn4, LV_OBJ_FLAG_PRESS_LOCK);
   btn_label = lv_label_create(btn4);
-  lv_label_set_text(btn_label, "Knop4");
+  lv_label_set_text(btn_label, "TRD Pwd");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn4, lv_color_make(72, 72, 72), 0);
   lv_obj_set_size(btn4, 100, 50);
 
   // Create a Button (btn5)
@@ -381,6 +424,8 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn5);
   lv_label_set_text(btn_label, "Knop5");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn5, lv_color_make(20, 20, 20), 0);
+  lv_obj_set_style_text_color(btn5, lv_color_make(188, 188, 188), 0);
   lv_obj_set_size(btn5, 100, 50);
 
   // Create a Toggle button (btn6)
@@ -391,6 +436,8 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn6);
   lv_label_set_text(btn_label, "Knop6");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn6, lv_color_make(20, 20, 20), 0);
+  lv_obj_set_style_text_color(btn6, lv_color_make(188, 188, 188), 0);
   lv_obj_set_size(btn6, 100, 50);
   
   // Create a Button (btn7)
@@ -401,6 +448,8 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn7);
   lv_label_set_text(btn_label, "Knop7");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn7, lv_color_make(20, 20, 20), 0);
+  lv_obj_set_style_text_color(btn7, lv_color_make(188, 188, 188), 0);
   lv_obj_set_size(btn7, 100, 50);
 
   // Create a Button (btn8)
@@ -411,6 +460,8 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn8);
   lv_label_set_text(btn_label, "Knop8");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn8, lv_color_make(20, 20, 20), 0);
+  lv_obj_set_style_text_color(btn8, lv_color_make(188, 188, 188), 0);
   lv_obj_set_size(btn8, 100, 50);
 
   // Create a Button (btn9)
@@ -421,6 +472,8 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn9);
   lv_label_set_text(btn_label, "Knop9");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn9, lv_color_make(20, 20, 20), 0);
+  lv_obj_set_style_text_color(btn9, lv_color_make(188, 188, 188), 0);
   lv_obj_set_size(btn9, 100, 50);
 
   // Create a Button (btn10)
@@ -431,6 +484,8 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn10);
   lv_label_set_text(btn_label, "Knop10");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn10, lv_color_make(20, 20, 20), 0);
+  lv_obj_set_style_text_color(btn10, lv_color_make(188, 188, 188), 0);
   lv_obj_set_size(btn10, 100, 50);
 
     // Create a Button (btn11)
@@ -441,6 +496,8 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn11);
   lv_label_set_text(btn_label, "Knop11");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn11, lv_color_make(20, 20, 20), 0);
+  lv_obj_set_style_text_color(btn11, lv_color_make(188, 188, 188), 0);
   lv_obj_set_size(btn11, 100, 50);
 
     // Create a Button (btn12)
@@ -451,6 +508,8 @@ void lv_create_main_gui(void) {
   btn_label = lv_label_create(btn12);
   lv_label_set_text(btn_label, "Knop12");
   lv_obj_center(btn_label);
+  lv_obj_set_style_bg_color(btn12, lv_color_make(20, 20, 20), 0);
+  lv_obj_set_style_text_color(btn12, lv_color_make(188, 188, 188), 0);
   lv_obj_set_size(btn12, 100, 50);
 }
 
